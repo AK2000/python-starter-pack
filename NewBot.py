@@ -35,6 +35,11 @@ def get_third_stance(stance1, stance2):
         return "Paper"
     if (stance1 == "Scissors" and stance2 == "Paper") or (stance2 == "Scissors" and stance1 == "Paper"):
         return "Rock"
+
+def get_back(node1, node2, numTurns, me):
+    paths = game.shortest_paths(node1, node2)
+    minNumTurns = me.movement_counter-me.speed + (len(paths[0]) * (7-me.speed))
+    return numTurns <= minNumTurns
     
 # main player script logic
 # DO NOT CHANGE BELOW ----------------------------
@@ -55,14 +60,16 @@ for line in fileinput.input():
         if game.has_monster(me.location):
             destination_node = me.destination
         else:
-            destination_node = turnCounter%len(nodeCircle)
+            if (get_back(me.location, 0, game.get_monster(0).respawn_counter-1, me)):
+                destination_node = 0
+            else:
+                destination_node = turnCounter%len(nodeCircle)
     else:
         destination_node = me.destination
-
     if game.has_monster(me.location):
         # if there's a monster at my location, choose the stance that damages that monster
-        if(game.get_opponent().stance == me.location):
-            
+        if(game.get_opponent().location == me.location):
+            get_winning_stance(game.get_opponent().location)
         else:
             chosen_stance = get_winning_stance(game.get_monster(me.location).stance)
     else:
@@ -72,8 +79,4 @@ for line in fileinput.input():
     # submit your decision for the turn (This function should be called exactly once per turn)
     game.submit_decision(destination_node, chosen_stance)
 
-def get_back(node1, node2, numTurns):
-    paths = game.shortest_paths(node1, node2)
-    minNumTurns = len(paths[0]) * (7-me.speed)
-    return numTurns <= minNumTurns
     
