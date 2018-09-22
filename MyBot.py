@@ -7,7 +7,7 @@ import json
 import random
 
 first_line = True # DO NOT REMOVE
-
+#TESTING IF I CAN PUSH
 # global variables or other functions can go here
 stances = ["Rock", "Paper", "Scissors"]
 
