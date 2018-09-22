@@ -38,7 +38,7 @@ def get_third_stance(stance1, stance2):
 
 def get_back(node1, node2, numTurns, me):
     paths = game.shortest_paths(node1, node2)
-    minNumTurns = me.movement_counter-me.speed + (len(paths[0]) * (7-me.speed))
+    minNumTurns = me.movement_counter + (len(paths[0]) * (7-me.speed))
     return numTurns <= minNumTurns
     
 # main player script logic
@@ -60,15 +60,16 @@ for line in fileinput.input():
         if game.has_monster(me.location):
             destination_node = me.destination
         else:
-            if (not get_back(me.location, 0, game.get_monster(0).respawn_counter-1, me)):
+            if (not get_back(me.location, 0, game.get_monster(0).respawn_counter-7, me)):
                 paths = game.shortest_paths(me.location, 0)
                 destination_node = paths[0][0]
             else:
                 if(turnCounter < 155):
                     paths = game.shortest_paths(me.location, nodeCircle[turnCounter%len(nodeCircle)])
+                    destination_node = paths[0][0]
                 else:
                     paths = game.shortest_paths(me.location, nodeCircle2[turnCounter%len(nodeCircle2)])
-                destination_node = paths[0][0]
+                    destination_node = paths[0][0]
     else:
         destination_node = me.destination
     if game.has_monster(me.location):
