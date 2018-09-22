@@ -16,8 +16,8 @@ first_line = True # DO NOT REMOVE
 
 # global variables or other functions can go here
 stances = ["Rock", "Paper", "Scissors"]
-nodeCircle = [0, 1, 3, 1]
-nodeCircle2 = [0, 6, 0, 10]
+nodeCircle = [3]
+nodeCircle2 = [6,10]
 turnCounter = 0
 
 def get_winning_stance(stance):
@@ -38,8 +38,8 @@ def get_third_stance(stance1, stance2):
 
 def get_back(node1, node2, numTurns, me):
     paths = game.shortest_paths(node1, node2)
-    minNumTurns = me.movement_counter + (len(paths[0]) * (7-me.speed))
-    return numTurns <= minNumTurns
+    minNumTurns = me.movement_counter-me.speed + (len(paths[0]) * (7-me.speed))
+    return numTurns > minNumTurns
     
 # main player script logic
 # DO NOT CHANGE BELOW ----------------------------
@@ -52,35 +52,38 @@ for line in fileinput.input():
 # DO NOT CHANGE ABOVE ---------------------------
 
     # code in this block will be executed each turn of the game
-
     me = game.get_self()
     turnCounter = turnCounter + 1  
     
     if me.location == me.destination: # check if we have moved this turn
-        if game.has_monster(me.location):
-            destination_node = me.destination
+        if game.has_monster(me.location) and  not game.get_monster(me.location).dead:
+            destination_node = me.location
         else:
-            if (not get_back(me.location, 0, game.get_monster(0).respawn_counter-7, me)):
+            if (not get_back(me.location, 0, game.get_monster(0).respawn_counter-1, me)):
                 paths = game.shortest_paths(me.location, 0)
                 destination_node = paths[0][0]
             else:
-                if(turnCounter < 155):
+                if(turnCounter < 115):
                     paths = game.shortest_paths(me.location, nodeCircle[turnCounter%len(nodeCircle)])
-                    destination_node = paths[0][0]
                 else:
                     paths = game.shortest_paths(me.location, nodeCircle2[turnCounter%len(nodeCircle2)])
-                    destination_node = paths[0][0]
+                destination_node = paths[0][0]
+                game.log("Destination: " + str(destination_node))
     else:
         destination_node = me.destination
-    if game.has_monster(me.location):
+    
+    #chosen_stance = "Paper"
+    if game.has_monster(me.location) and not game.get_monster(me.location).dead:
         # if there's a monster at my location, choose the stance that damages that monster
         chosen_stance = get_winning_stance(game.get_monster(me.location).stance)
     else:
         # otherwise, pick a random stance
         chosen_stance = stances[random.randint(0, 2)]
+        game.log(str(chosen_stance))
         
-    if(game.get_opponent().location == me.location):
-        chosen_stance = get_winning_stance(game.get_opponent().stance)
+    # if(game.get_opponent().location == me.location):
+    #     chosen_stance = get_winning_stance(game.get_opponent().stance)
+    
 
     # submit your decision for the turn (This function should be called exactly once per turn)
     game.submit_decision(destination_node, chosen_stance)
