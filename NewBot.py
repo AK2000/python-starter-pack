@@ -16,8 +16,8 @@ first_line = True # DO NOT REMOVE
 
 # global variables or other functions can go here
 stances = ["Rock", "Paper", "Scissors"]
-nodeCircle = [0,1,3,1]
-nodeCircle2 = [0,6,0,10]
+nodeCircle = [3]
+nodeCircle2 = [6,10]
 turnCounter = 0
 
 def get_winning_stance(stance):
@@ -64,7 +64,10 @@ for line in fileinput.input():
                 paths = game.shortest_paths(me.location, 0)
                 destination_node = paths[0][0]
             else:
-                paths = game.shortest_paths(me.location, turnCounter%len(nodeCircle))
+                if(turnCounter < 155):
+                    paths = game.shortest_paths(me.location, turnCounter%len(nodeCircle))
+                else:
+                    paths = game.shortest_paths(me.location, turnCounter%len(nodeCircle2))
                 destination_node = paths[0][0]
     else:
         destination_node = me.destination
