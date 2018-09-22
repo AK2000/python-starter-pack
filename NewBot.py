@@ -16,8 +16,8 @@ first_line = True # DO NOT REMOVE
 
 # global variables or other functions can go here
 stances = ["Rock", "Paper", "Scissors"]
-nodeCircle = [3]
-nodeCircle2 = [6,10]
+nodeCircle = [0, 1, 3, 1]
+nodeCircle2 = [0, 6, 0, 10]
 turnCounter = 0
 
 def get_winning_stance(stance):
@@ -60,14 +60,14 @@ for line in fileinput.input():
         if game.has_monster(me.location):
             destination_node = me.destination
         else:
-            if (get_back(me.location, 0, game.get_monster(0).respawn_counter-1, me)):
+            if (not get_back(me.location, 0, game.get_monster(0).respawn_counter-1, me)):
                 paths = game.shortest_paths(me.location, 0)
                 destination_node = paths[0][0]
             else:
                 if(turnCounter < 155):
-                    paths = game.shortest_paths(me.location, turnCounter%len(nodeCircle))
+                    paths = game.shortest_paths(me.location, nodeCircle[turnCounter%len(nodeCircle)])
                 else:
-                    paths = game.shortest_paths(me.location, turnCounter%len(nodeCircle2))
+                    paths = game.shortest_paths(me.location, nodeCircle2[turnCounter%len(nodeCircle2)])
                 destination_node = paths[0][0]
     else:
         destination_node = me.destination
@@ -79,7 +79,7 @@ for line in fileinput.input():
         chosen_stance = stances[random.randint(0, 2)]
         
     if(game.get_opponent().location == me.location):
-            get_winning_stance(game.get_opponent().location)
+        chosen_stance = get_winning_stance(game.get_opponent().stance)
 
     # submit your decision for the turn (This function should be called exactly once per turn)
     game.submit_decision(destination_node, chosen_stance)
