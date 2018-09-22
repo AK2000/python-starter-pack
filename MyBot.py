@@ -19,6 +19,7 @@ stances = ["Rock", "Paper", "Scissors"]
 nodeCircle = [3]
 nodeCircle2 = [6,10]
 turnCounter = 0
+index = 0
 
 def get_winning_stance(stance):
     if stance == "Rock":
@@ -64,11 +65,11 @@ for line in fileinput.input():
                 destination_node = paths[0][0]
             else:
                 if(turnCounter < 115):
-                    paths = game.shortest_paths(me.location, nodeCircle[turnCounter%len(nodeCircle)])
+                    paths = game.shortest_paths(me.location, nodeCircle[index%len(nodeCircle)])
                 else:
-                    paths = game.shortest_paths(me.location, nodeCircle2[turnCounter%len(nodeCircle2)])
+                    paths = game.shortest_paths(me.location, nodeCircle2[index%len(nodeCircle2)])
                 destination_node = paths[0][0]
-                game.log("Destination: " + str(destination_node))
+                index+=1
     else:
         destination_node = me.destination
     
@@ -79,7 +80,6 @@ for line in fileinput.input():
     else:
         # otherwise, pick a random stance
         chosen_stance = stances[random.randint(0, 2)]
-        game.log(str(chosen_stance))
         
     # if(game.get_opponent().location == me.location):
     #     chosen_stance = get_winning_stance(game.get_opponent().stance)
