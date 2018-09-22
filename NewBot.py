@@ -61,9 +61,11 @@ for line in fileinput.input():
             destination_node = me.destination
         else:
             if (get_back(me.location, 0, game.get_monster(0).respawn_counter-1, me)):
-                destination_node = 0
+                paths = game.shortest_paths(me.location, 0)
+                destination_node = paths[0][0]
             else:
-                destination_node = turnCounter%len(nodeCircle)
+                paths = game.shortest_paths(me.location, turnCounter%len(nodeCircle))
+                destination_node = paths[0][0]
     else:
         destination_node = me.destination
     if game.has_monster(me.location):
